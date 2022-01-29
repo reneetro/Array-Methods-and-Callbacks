@@ -8,17 +8,21 @@ const finals2014 = fifaData.filter(function(item){
     return item.Year === 2014 && item.Stage === 'Final';
     });
     
-    console.log('task 1', finals2014)
+   //console.log('task 1', finals2014)
 //(a) Home Team name for 2014 world cup final
 console.log(finals2014[0]['Home Team Name']);
 //(b) Away Team name for 2014 world cup final
 console.log(finals2014[0]['Away Team Name']);
 //(c) Home Team goals for 2014 world cup final
-
+console.log(finals2014[0]['Home Team Goals']);
 //(d) Away Team goals for 2014 world cup final
-
+console.log(finals2014[0]['Away Team Goals']);
 //(e) Winner of 2014 world cup final */
-
+if (finals2014[0]['Home Team Goals'] > finals2014[0]['Away Team Goals']) {
+    console.log(`${finals2014[0]['Home Team Name']} won` )
+} else{
+    console.log(`${finals2014[0]['Away Team Name']} won` )
+}
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 2: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
 Use getFinals to do the following:
@@ -34,7 +38,7 @@ function getFinals(array) {
    });
    return finalTeams;
 }
-console.log(getFinals(fifaData));
+//console.log(getFinals(fifaData));
 
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 3: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
@@ -47,6 +51,7 @@ function getYears(getFinalsCB) {
     const years = getFinalsCB.map(function(item){
         return item.Year;
     });
+    //console.log(getYears);
     return years;
 }
 
@@ -59,19 +64,12 @@ Use the higher-order function getWinners to do the following:
 3. Determines the winner (home or away) of each `finals` game. 
 4. Returns the names of all winning countries in an array called `winners` */ 
 
-function getWinners(getFinalsCB) {
-    const winners = [];
-    getFinalsCB.forEach(function(item){
-        if (item['Home Team Goals'] > item['Away Team Goals']) {
-            winners.push(item['Home Team Name'])
-        } else {
-            winners.push(item['Away Team Name'])
-        }        
-    });
-    return winners;
+function getWinners(array, getFinalsCB) {
+    return getFinalsCB(array).map(item => item['Home Team Goals'] > item['Away Team Goals'] ? 
+    item['Home Team Name'] : item['Away Team Name']);
 }
 
-console.log('task 4', getWinners(getFinals(fifaData)));
+// console.log('task 4', getWinners(getFinals(fifaData)));
 
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 5: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 
 Use the higher-order function getWinnersByYear to do the following:
@@ -84,20 +82,15 @@ Use the higher-order function getWinnersByYear to do the following:
 hint: the strings returned need to exactly match the string in step 4.
  */
 
-function getWinnersByYear(array, getFinalsCB, getYearsCB, getWinnersCB) {
-    const yearWinners = [];
-    array.forEach(function(item){
-        // const yearWinner = `In ${item.Year}, ${getWinnersCB[i]} won the world cup!`;
-        yearWinners.push(item);
-        //yearWinners.push(`In ${item}, ${getWinnersCB[i]} won the world cup!`);
-        //console.log(`Index is: ${item}, ${getWinnersCB[i]}` )
-    });
-    console.log(yearWinners);
-    return yearWinners;
-}
-
-//console.log('task 5', getWinnersByYear(getYears(getFinals(fifaData)), getWinners(getFinals(fifaData))));
-
+function getWinnersByYear(array, getFinals, getYearsCB, getWinnersCB) {
+    // const finals = getFinalsCB(array, getFinals);
+    const winners = getWinnersCB(array, getFinals);
+    const years = getYearsCB(array, getFinals);
+    return winners.map((item, index) => `In ${years[index]}, ${item} won the world cup!`);
+    
+    }
+//console.log(getYears);
+console.log('task 5', getWinnersByYear(fifaData, getFinals, getYears, getWinners))
 /* 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀 Task 6: 🚀🚀🚀🚀🚀🚀🚀🚀🚀🚀
 Use the higher order function getAverageGoals to do the following: 
  1. Receive the callback function getFinals from task 2 ensure you pass in the data as an argument
@@ -108,8 +101,11 @@ Use the higher order function getAverageGoals to do the following:
  Example of invocation: getAverageGoals(getFinals(fifaData));
 */
 
-function getAverageGoals(/* code here */) {
-   /* code here */
+function getAverageGoals(array) {
+   const averageHomeGoals = array.reduce(function(acc, item){
+    return acc + item['Home Team Goals'] + item['Away Team Goals'];
+   },0);
+   return (averageHomeGoals/array.length).toFixed(2);
 }
 
 
